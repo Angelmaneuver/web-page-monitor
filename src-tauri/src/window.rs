@@ -56,7 +56,7 @@ pub fn get_app_label() -> String {
 
 #[tauri::command]
 pub fn reload() {
-    WINDOW.get().unwrap().monitor.reload();
+    WINDOW.get().unwrap().monitor.reload().unwrap();
 }
 
 #[tauri::command]

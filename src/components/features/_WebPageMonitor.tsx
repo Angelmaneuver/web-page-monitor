@@ -25,7 +25,7 @@ function WebPageMonitor() {
   );
 }
 
-function Wrapper({ initial }: { initial: Promise<undefined> }) {
+function Wrapper({ initial }: { initial: Promise<string> }) {
   const data = use(initial);
 
   return <Window label={data} reload={reload} />;
