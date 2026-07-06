@@ -28,6 +28,15 @@ pub fn resize_monitor() {
     size.width = size.width - 0.5 - 0.5 - 0.5 - 0.5 - 10.0;
     size.height = size.height - 39.59 - 5.0 - 0.5 - 0.5 - 0.5 - 0.5 - 10.0;
 
+    window.monitor.set_size(Logical(size)).unwrap();
+
+    reset_position_monitor();
+}
+
+pub fn reset_position_monitor() {
+    let window = WINDOW.get().unwrap();
+    let scale_factor = window.main.scale_factor().unwrap();
+
     let mut position = window
         .main
         .inner_position()
@@ -37,7 +46,6 @@ pub fn resize_monitor() {
     position.x = position.x + 0.5 + 0.5 + 5.0;
     position.y = position.y + 39.59 + 5.0 + 0.5 + 0.5 + 4.0;
 
-    window.monitor.set_size(Logical(size)).unwrap();
     window.monitor.set_position(position).unwrap();
 }
 

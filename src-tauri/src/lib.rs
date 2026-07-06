@@ -60,6 +60,8 @@ pub fn run() {
             main.on_window_event(move |event| {
                 if let WindowEvent::Resized(_size) = event {
                     window::resize_monitor();
+                } else if let WindowEvent::Moved(_position) = event {
+                    window::reset_position_monitor();
                 }
             });
 
