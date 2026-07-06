@@ -1,0 +1,138 @@
+body {
+  font-size: small;
+  background: rgba(0, 0, 0, 0);
+  overflow: hidden;
+}
+
+section.loading {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  align-items: center;
+  justify-items: center;
+}
+
+section.loading > * {
+  flex-grow: 1;
+  text-align: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  gap: 5px;
+}
+
+main > section.system {
+  display: flex;
+  height: 39.59px;
+  width: 100%;
+  flex-grow: 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+main > section.system > section.bar {
+  flex-grow: 1;
+  text-align: center;
+  align-content: center;
+  padding: 0.5px;
+  margin: 0.5px;
+  height: 100%;
+  width: 100%;
+  border-radius: 0.2em;
+  color: rgba(230, 230, 230, 0.8);
+  text-shadow: 0 0 0.5em #00bfff;
+  background: rgba(51, 49, 50, 0.9);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+main > section.system > section.bar:active {
+  cursor: grabbing;
+}
+
+main > section.system > .button {
+  padding: 0.3em;
+  margin: 0.3em;
+  border-radius: 0.2em;
+  background: transparent;
+  user-select: auto;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+
+main > section.system > .button {
+  color: rgba(230, 230, 230, 0.8);
+  background: rgba(51, 49, 50, 0.9);
+}
+
+main > section.system > .button svg {
+  filter: drop-shadow(0 0 0.5em #00bfff);
+}
+
+main > section.system > .button svg {
+  filter: drop-shadow(0 0 0.5em);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+main > section.monitor {
+  flex-grow: 1;
+  box-sizing: border-box;
+  padding: 0.5px;
+  margin: 0.5px;
+  height: calc(100vh - 39.59px - 5px - 0.5px - 0.5px - 0.5px - 0.5px);
+  border-radius: 0.2em;
+  background: rgba(51, 49, 50, 0.9);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.led {
+  position: relative;
+  overflow: hidden;
+  color: rgba(220, 20, 60, 0.8);
+  font-size: 0.8em;
+  font-weight: bold;
+  text-shadow: 0 0 8em;
+  outline: 1px solid rgba(93, 93, 99, 0.9);
+}
+
+.led:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(transparent 0 1px, rgba(0, 0, 0, 0.7) 1px);
+  background-size: 2px 2px;
+}
+
+.led > span {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.led.marquee > span {
+  padding-left: 100%;
+  animation-name: marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  99%,
+  to {
+    transform: translateX(-100%);
+  }
+}

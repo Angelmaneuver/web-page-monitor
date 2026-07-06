@@ -1,0 +1,143 @@
+{
+  "folders": [
+    {
+      "name": "web page monitor",
+      "path": ".",
+    },
+  ],
+  "settings": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit",
+      "source.organizeImports": "explicit",
+    },
+    "[rust]": {
+      "editor.defaultFormatter": "rust-lang.rust-analyzer",
+      "editor.formatOnSave": true,
+    },
+    "oxc.path.oxlint": "node_modules/oxlint/bin/oxlint",
+    "oxc.path.oxfmt": "node_modules/oxfmt/bin/oxfmt",
+    "oxc.configPath": ".oxlintrc.json",
+    "oxc.fmt.configPath": ".oxfmtrc.json",
+    "oxc.trace.server": "verbose",
+    "files.associations": {
+      ".eslintrc": "jsonc",
+      ".prettierrc": "jsonc",
+      ".eslintignore": "ignore",
+      "*.css": "tailwindcss",
+    },
+    "files.readonlyInclude": {
+      "**/.cargo/registry/src/**/*.rs": true,
+      "**/.cargo/git/checkouts/**/*.rs": true,
+      "**/lib/rustlib/src/rust/library/**/*.rs": true,
+    },
+    "js/ts.validate.enabled": false,
+    "js/ts.format.enabled": false,
+    "search.exclude": {
+      ".git": true,
+      "node_modules": true,
+      "npm-debug.log.*": true,
+      "package-lock.json": true,
+      "bun.lock": true,
+      "*.{css,sass,scss}.d.ts": true,
+    },
+    "json.schemaDownload.trustedDomains": {
+      "https://schemastore.azurewebsites.net/": true,
+      "https://raw.githubusercontent.com/microsoft/vscode/": true,
+      "https://raw.githubusercontent.com/devcontainers/spec/": true,
+      "https://www.schemastore.org/": true,
+      "https://json.schemastore.org/": true,
+      "https://json-schema.org/": true,
+      "https://developer.microsoft.com/json-schemas/": true,
+      "https://schema.tauri.app/": true,
+      "https://ui.shadcn.com/": true,
+    },
+  },
+  "launch": {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "lldb",
+        "request": "launch",
+        "name": "Tauri Development Debug",
+        "cargo": {
+          "args": [
+            "build",
+            "--manifest-path=${workspaceFolder}/src-tauri/Cargo.toml",
+            "--no-default-features",
+          ],
+        },
+        "args": ["--label", "X", "--url", "https://x.com/home"],
+        // task for the `beforeDevCommand` if used, must be configured in `.vscode/tasks.json`
+        "preLaunchTask": "ui:dev",
+      },
+      {
+        "type": "lldb",
+        "request": "launch",
+        "name": "Tauri Production Debug",
+        "cargo": {
+          "args": ["build", "--release", "--manifest-path=./src-tauri/Cargo.toml"],
+        },
+        // task for the `beforeBuildCommand` if used, must be configured in `.vscode/tasks.json`
+        "preLaunchTask": "ui:build",
+      },
+    ],
+  },
+  "tasks": {
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "ui:dev",
+        "type": "shell",
+        // `dev` keeps running in the background
+        // ideally you should also configure a `problemMatcher`
+        // see https://code.visualstudio.com/docs/editor/tasks#_can-a-background-task-be-used-as-a-prelaunchtask-in-launchjson
+        "isBackground": true,
+        "problemMatcher": {
+          "owner": "custom",
+          "pattern": {
+            "regexp": "^$",
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^VITE",
+            "endsPattern": "ready in.*",
+          },
+        },
+        // change this to your `beforeDevCommand`:
+        "command": "bun",
+        "args": ["dev"],
+      },
+      {
+        "label": "ui:build",
+        "type": "shell",
+        // change this to your `beforeBuildCommand`:
+        "command": "bun",
+        "args": ["build"],
+      },
+    ],
+  },
+  "extensions": {
+    "recommendations": [
+      "christian-kohler.path-intellisense",
+      "EditorConfig.EditorConfig",
+      "tauri-apps.tauri-vscode",
+      "rust-lang.rust-analyzer",
+      "oxc.oxc-vscode",
+      "vadimcn.vscode-lldb",
+      "bradlc.vscode-tailwindcss",
+    ],
+  },
+}

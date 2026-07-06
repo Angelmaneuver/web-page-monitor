@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "web-page-monitor",
+  "version": "0.1.0",
+  "identifier": "com.seferrasiel.web-page-display",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "create": false,
+        "label": "main",
+        "width": 420,
+        "height": 728,
+        "decorations": false,
+        "hiddenTitle": true,
+        "skipTaskbar": true,
+        "transparent": true,
+        "shadow": false
+      },
+      {
+        "create": false,
+        "label": "monitor",
+        "resizable": false,
+        "decorations": false,
+        "hiddenTitle": true,
+        "skipTaskbar": true,
+        "transparent": true,
+        "shadow": false
+      }
+    ],
+    "macOSPrivateApi": true,
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "cli": {
+      "description": "Web Page Monitor's Configurations",
+      "args": [
+        {
+          "name": "label",
+          "short": "l",
+          "description": "Web Page Monitor's ID",
+          "takesValue": true
+        },
+        {
+          "name": "url",
+          "short": "u",
+          "description": "URL of the Web Page to Monitor",
+          "takesValue": true
+        }
+      ]
+    }
+  }
+}

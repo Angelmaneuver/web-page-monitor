@@ -1,0 +1,41 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxfmt/configuration_schema.json",
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "embeddedLanguageFormatting": "auto",
+  "singleAttributePerLine": false,
+  "sortImports": {
+    "groups": [
+      [
+        "side_effect"
+      ],
+      [
+        "builtin"
+      ],
+      [
+        "external"
+      ],
+      [
+        "internal"
+      ],
+      [
+        "parent"
+      ],
+      [
+        "sibling"
+      ],
+      [
+        "index"
+      ]
+    ],
+    "sortSideEffects": false,
+    "newlinesBetween": true,
+    "order": "asc",
+    "ignoreCase": true
+  }
+}
