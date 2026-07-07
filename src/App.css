@@ -40,9 +40,8 @@ main > section.system > section.bar {
   flex-grow: 1;
   text-align: center;
   align-content: center;
-  padding: 0.5px;
-  margin: 0.5px;
-  height: 100%;
+  padding: 0.3em;
+  margin: 0.3em;
   width: 100%;
   border-radius: 0.2em;
   color: rgba(230, 230, 230, 0.8);
