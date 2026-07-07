@@ -37,6 +37,8 @@ main > section.system {
 }
 
 main > section.system > section.bar {
+  opacity: 0;
+  visibility: hidden;
   flex-grow: 1;
   text-align: center;
   align-content: center;
@@ -50,6 +52,14 @@ main > section.system > section.bar {
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+main > section.system > section.bar.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 main > section.system > section.bar:active {
