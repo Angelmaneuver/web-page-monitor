@@ -1,7 +1,22 @@
-# Tauri + React + Typescript
+# Web Page Monitor
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+![screenshot](./screenshot.jpg)
 
-## Recommended IDE Setup
+This Tauri app like a widget allows you to display the web page on your desktop.
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+```
+NAME
+    Web Page Monitor
+
+SYNOPSIS
+    web-page-monitor --label <Uniqe name> --url <Web Page Url>
+
+ARGUMENTS
+    Uniqe name
+        Used to manage the text displayed in the title bar and the window state
+    Web Page Url
+        The url of the web page you want to display
+
+NOTES
+    Error handling is incomplete
+```
