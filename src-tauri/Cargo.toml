@@ -1,8 +1,8 @@
 [package]
 name = "web-page-monitor"
 version = "0.1.1"
-description = "A Tauri App"
-authors = ["you"]
+description = "It's a widget like app that lets you display web page on your desktop."
+authors = ["Angelmaneuver"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
