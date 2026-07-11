@@ -1,16 +1,26 @@
+use std::panic;
 use std::str::FromStr;
+use std::sync::OnceLock;
 
 use tauri::utils::config::WindowConfig;
-use tauri::{Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+use tauri::{AppHandle, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 use tauri_plugin_cli::CliExt;
+use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 mod window;
 
+static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    set_hook();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_cli::init())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
+            APP_HANDLE.set(app.handle().clone()).ok();
+
             let mut config = window::Config {
                 main: get_window_config(app, "main"),
                 monitor: get_window_config(app, "monitor"),
@@ -53,6 +63,35 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn set_hook() {
+    panic::set_hook(Box::new(|info| {
+        let payload = info
+            .payload()
+            .downcast_ref::<&str>()
+            .copied()
+            .or_else(|| info.payload().downcast_ref::<String>().map(String::as_str))
+            .unwrap_or("unknown panic");
+
+        let location = info
+            .location()
+            .map(|l| format!("{}:{}:{}", l.file(), l.line(), l.column()))
+            .unwrap_or_else(|| "unknown location".to_string());
+
+        let message_text = format!("panic occurred:\n{}\n{}", payload, location);
+
+        if let Some(app_handle) = APP_HANDLE.get() {
+            let _ = app_handle
+                .dialog()
+                .message(&message_text)
+                .kind(MessageDialogKind::Error)
+                .title("Error")
+                .blocking_show();
+        } else {
+            eprintln!("{}", message_text);
+        }
+    }));
 }
 
 fn get_window_config(app: &mut tauri::App, label: &str) -> WindowConfig {
