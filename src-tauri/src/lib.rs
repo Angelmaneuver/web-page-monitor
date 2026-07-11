@@ -3,7 +3,7 @@ use std::str::FromStr;
 use std::sync::OnceLock;
 
 use tauri::utils::config::WindowConfig;
-use tauri::{AppHandle, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+use tauri::{AppHandle, Emitter, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 use tauri_plugin_cli::CliExt;
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
@@ -51,6 +51,8 @@ pub fn run() {
                     window::reset_position_monitor();
                 }
             });
+
+            app.emit("backend-ready", &config.main.label).ok();
 
             Ok(())
         })
