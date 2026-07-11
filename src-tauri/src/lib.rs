@@ -12,36 +12,11 @@ pub fn run() {
         .plugin(tauri_plugin_cli::init())
         .setup(|app| {
             let mut config = window::Config {
-                main: get_config(app, "main"),
-                monitor: get_config(app, "monitor"),
+                main: get_window_config(app, "main"),
+                monitor: get_window_config(app, "monitor"),
             };
 
-            if let Ok(matches) = app.cli().matches() {
-                dbg!("{:?}", &matches);
-
-                if let Some(arg) = matches.args.get("label") {
-                    if let Some(value) = arg.value.as_str() {
-                        let label = value.to_string();
-                        dbg!("{:?}", &label);
-
-                        config.main.label = label.clone();
-                        config.monitor.label = format!("{}_monitor", label);
-                    }
-                }
-
-                if let Some(arg) = matches.args.get("url") {
-                    if let Some(value) = arg.value.as_str() {
-                        let url = Url::from_str(&value.to_string())?;
-                        dbg!("{:?}", &url);
-
-                        config.monitor.url = WebviewUrl::External(url);
-                    } else {
-                        panic!(
-                            "error while URL for the monitioring web page has not been specified"
-                        );
-                    }
-                }
-            }
+            set_cli_args(app, &mut config);
 
             let app_handle = app.handle();
 
@@ -50,10 +25,12 @@ pub fn run() {
                 .parent(&main)?
                 .build()?;
 
-            window::WINDOW.get_or_init(|| window::Window {
-                main: main.clone(),
-                monitor: monitor.clone(),
-            });
+            window::WINDOW
+                .set(window::Window {
+                    main: main.clone(),
+                    monitor: monitor.clone(),
+                })
+                .ok();
 
             window::resize_monitor();
 
@@ -78,7 +55,7 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-fn get_config(app: &mut tauri::App, label: &str) -> WindowConfig {
+fn get_window_config(app: &mut tauri::App, label: &str) -> WindowConfig {
     return app
         .config()
         .app
@@ -87,4 +64,34 @@ fn get_config(app: &mut tauri::App, label: &str) -> WindowConfig {
         .find(|&config| config.label == label)
         .expect(&format!("error while reading the {} window config", label))
         .clone();
+}
+
+fn set_cli_args(app: &mut tauri::App, config: &mut window::Config) {
+    if let Ok(matches) = app.cli().matches() {
+        dbg!("{:?}", &matches);
+
+        if let Some(arg) = matches.args.get("label") {
+            if let Some(value) = arg.value.as_str() {
+                let label = value.to_string();
+                dbg!("{:?}", &label);
+
+                config.main.label = label.clone();
+                config.monitor.label = format!("{}_monitor", label);
+            }
+        }
+
+        if let Some(arg) = matches.args.get("url") {
+            if let Some(value) = arg.value.as_str() {
+                let url = Url::from_str(&value.to_string())
+                    .expect("error while URL for the monitoring web page is invalid");
+                dbg!("{:?}", &url);
+
+                config.monitor.url = WebviewUrl::External(url);
+            } else {
+                panic!("error while URL for the monitioring web page has not been specified");
+            }
+        }
+    } else {
+        panic!("error while analyzing the startup options");
+    }
 }
