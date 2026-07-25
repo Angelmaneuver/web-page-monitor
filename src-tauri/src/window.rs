@@ -6,6 +6,7 @@ use tauri::{AppHandle, WebviewWindow};
 pub struct Config {
     pub main: WindowConfig,
     pub monitor: WindowConfig,
+    pub position: Option<(Option<f64>, Option<f64>)>,
 }
 
 pub struct Window {

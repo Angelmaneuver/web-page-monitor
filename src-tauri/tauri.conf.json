@@ -65,6 +65,16 @@
           "short": "u",
           "description": "URL of the Web Page to Monitor",
           "takesValue": true
+        },
+        {
+          "name": "x",
+          "description": "Initial x position of the window",
+          "takesValue": true
+        },
+        {
+          "name": "y",
+          "description": "Initial y position of the window",
+          "takesValue": true
         }
       ]
     }
