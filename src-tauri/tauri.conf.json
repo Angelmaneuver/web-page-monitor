@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "web-page-monitor",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "identifier": "angelmaneuver.web.page.display",
   "build": {
     "beforeDevCommand": "bun run dev",
@@ -65,6 +65,11 @@
           "short": "u",
           "description": "URL of the Web Page to Monitor",
           "takesValue": true
+        },
+        {
+          "name": "kiosk",
+          "short": "k",
+          "description": "Launch the app in kiosk mode"
         },
         {
           "name": "x",

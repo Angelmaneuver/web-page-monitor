@@ -3,15 +3,16 @@ import type { FallbackProps } from 'react-error-boundary';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { Spinner } from '@/components/ui/spinner';
-import { getAppLabel, reload } from '@/lib/tauri/window';
+import type { Initial } from '@/lib/tauri/window';
+import { getInitialData, reload } from '@/lib/tauri/window';
 
 import Window from './_Window';
 
 function WebPageMonitor() {
-  const [initial, setInitial] = useState(getAppLabel());
+  const [initial, setInitial] = useState(getInitialData());
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => setInitial(getAppLabel())}>
+    <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => setInitial(getInitialData())}>
       <Suspense
         fallback={
           <section className="loading">
@@ -25,10 +26,10 @@ function WebPageMonitor() {
   );
 }
 
-function Wrapper({ initial }: { initial: Promise<string> }) {
+function Wrapper({ initial }: { initial: Promise<Initial> }) {
   const data = use(initial);
 
-  return <Window label={data} reload={reload} />;
+  return <Window className={data.kiosk ? 'kiosk' : undefined} label={data.label} reload={reload} />;
 }
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {

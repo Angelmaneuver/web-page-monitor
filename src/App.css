@@ -27,6 +27,10 @@ main {
   gap: 5px;
 }
 
+main.kiosk > section.system {
+  display: none;
+}
+
 main > section.system {
   display: flex;
   height: 39.59px;
@@ -101,6 +105,10 @@ main > section.monitor {
   background: rgba(51, 49, 50, 0.9);
   user-select: none;
   -webkit-user-select: none;
+}
+
+main.kiosk > section.monitor {
+  height: calc(100vh - 0.5px - 0.5px - 0.5px - 0.5px);
 }
 
 .led {

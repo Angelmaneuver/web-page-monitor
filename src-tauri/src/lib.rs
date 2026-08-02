@@ -1,14 +1,17 @@
+use serde::{Deserialize, Serialize};
 use std::panic;
 use std::str::FromStr;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::OnceLock;
 
 use tauri::utils::config::WindowConfig;
-use tauri::{AppHandle, Emitter, Position, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+use tauri::{AppHandle, Position, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 use tauri_plugin_cli::CliExt;
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 mod window;
 
+static BACKEND_READY: AtomicBool = AtomicBool::new(false);
 static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -24,10 +27,13 @@ pub fn run() {
             let mut config = window::Config {
                 main: get_window_config(app, "main"),
                 monitor: get_window_config(app, "monitor"),
+                kiosk: false,
                 position: None,
             };
 
             set_cli_args(app, &mut config);
+
+            window::CONFIG.set(config.clone()).ok();
 
             let app_handle = app.handle();
 
@@ -69,14 +75,15 @@ pub fn run() {
                 }
             });
 
-            app.emit("backend-ready", &config.main.label).ok();
+            BACKEND_READY.store(true, Ordering::SeqCst);
 
             Ok(())
         })
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            window::get_app_label,
+            is_backend_ready,
+            get_initial_data,
             window::reload,
             window::exit
         ])
@@ -150,6 +157,14 @@ fn set_cli_args(app: &mut tauri::App, config: &mut window::Config) {
             }
         }
 
+        let kiosk = matches
+            .args
+            .get("kiosk")
+            .and_then(|arg| arg.value.as_bool())
+            .unwrap_or(false);
+        dbg!("{:?}", &kiosk);
+        config.kiosk = kiosk;
+
         let x = matches.args.get("x").and_then(|arg| arg.value.as_str());
         let y = matches.args.get("y").and_then(|arg| arg.value.as_str());
 
@@ -175,6 +190,25 @@ fn parse_coordinate_arg(value: &str, name: &str) -> f64 {
     value.parse::<f64>().unwrap_or_else(|_| {
         panic!("error while the {name} coordinate has not been specified or is invalid")
     })
+}
+
+#[tauri::command]
+fn is_backend_ready() -> bool {
+    return BACKEND_READY.load(Ordering::SeqCst);
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Initial {
+    pub label: String,
+    pub kiosk: bool,
+}
+
+#[tauri::command]
+fn get_initial_data() -> Initial {
+    return Initial {
+        label: window::WINDOW.get().unwrap().main.label().to_string(),
+        kiosk: window::CONFIG.get().unwrap().kiosk,
+    };
 }
 
 #[cfg(test)]

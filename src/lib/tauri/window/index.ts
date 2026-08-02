@@ -1,5 +1,8 @@
 import close from './_close';
-import getAppLabel from './_getAppLabel';
+import type { Initial } from './_getInitialData';
+import getInitialData from './_getInitialData';
 import reload from './_reload';
 
-export { close, getAppLabel, reload };
+export { close, getInitialData, reload };
+
+export type { Initial };
