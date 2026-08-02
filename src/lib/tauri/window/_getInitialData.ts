@@ -12,11 +12,11 @@ interface Initial {
 }
 
 async function waitForBackendReady(): Promise<void> {
-  let intervalId: number | undefined;
+  let intervalId: ReturnType<typeof setInterval> | undefined;
   let settled = false;
 
   const cleanup = () => {
-    if (typeof intervalId === 'number') {
+    if (typeof intervalId !== 'undefined') {
       clearInterval(intervalId);
       intervalId = undefined;
     }
