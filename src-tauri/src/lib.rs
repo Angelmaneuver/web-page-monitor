@@ -4,8 +4,10 @@ use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::OnceLock;
 
+use tauri::menu::{MenuBuilder, MenuItem};
+use tauri::tray::{TrayIcon, TrayIconBuilder};
 use tauri::utils::config::WindowConfig;
-use tauri::{AppHandle, Position, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
+use tauri::{AppHandle, Manager, Position, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 use tauri_plugin_cli::CliExt;
 use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
@@ -13,6 +15,7 @@ mod window;
 
 static BACKEND_READY: AtomicBool = AtomicBool::new(false);
 static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
+static TRAY_ICON: OnceLock<TrayIcon> = OnceLock::new();
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -36,6 +39,34 @@ pub fn run() {
             window::CONFIG.set(config.clone()).ok();
 
             let app_handle = app.handle();
+
+            if config.kiosk {
+                let quit_item = MenuItem::with_id(app, "quit", "終了", true, None::<&str>)?;
+                let menu = MenuBuilder::new(app).item(&quit_item).build()?;
+                let tooltip = generate_main_window_title(
+                    &config,
+                    app.config()
+                        .product_name
+                        .as_deref()
+                        .unwrap_or("web-page-monitor"),
+                );
+                let tray_icon = TrayIconBuilder::new()
+                    .icon(
+                        app.default_window_icon()
+                            .cloned()
+                            .expect("default window icon"),
+                    )
+                    .menu(&menu)
+                    .tooltip(tooltip)
+                    .show_menu_on_left_click(true)
+                    .on_menu_event(move |app, event| {
+                        if event.id() == "quit" {
+                            window::exit(app.app_handle().clone());
+                        }
+                    })
+                    .build(app)?;
+                TRAY_ICON.set(tray_icon).ok();
+            }
 
             let main = WebviewWindowBuilder::from_config(app_handle, &config.main)?.build()?;
             let monitor = WebviewWindowBuilder::from_config(app_handle, &config.monitor)?
