@@ -42,6 +42,14 @@ pub fn run() {
                 .parent(&main)?
                 .build()?;
 
+            main.set_title(&generate_main_window_title(
+                &config,
+                app.config()
+                    .product_name
+                    .as_deref()
+                    .unwrap_or("web-page-monitor"),
+            ))?;
+
             if let Some((x, y)) = config.position {
                 let default_position = main.inner_position().ok().and_then(|position| {
                     main.scale_factor()
@@ -209,6 +217,18 @@ fn get_initial_data() -> Initial {
         label: window::WINDOW.get().unwrap().main.label().to_string(),
         kiosk: window::CONFIG.get().unwrap().kiosk,
     };
+}
+
+fn generate_main_window_title(config: &window::Config, app_name: &str) -> String {
+    let url = config.monitor.url.to_string();
+
+    if config.main.label.is_empty() && url.is_empty() {
+        app_name.to_owned()
+    } else if config.main.label.is_empty() && !url.is_empty() {
+        format!("{}", url)
+    } else {
+        format!("{}", config.main.label)
+    }
 }
 
 #[cfg(test)]
