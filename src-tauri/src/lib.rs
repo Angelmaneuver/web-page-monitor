@@ -41,8 +41,12 @@ pub fn run() {
             let app_handle = app.handle();
 
             if config.kiosk {
+                let reload_item = MenuItem::with_id(app, "reload", "リロード", true, None::<&str>)?;
                 let quit_item = MenuItem::with_id(app, "quit", "終了", true, None::<&str>)?;
-                let menu = MenuBuilder::new(app).item(&quit_item).build()?;
+                let menu = MenuBuilder::new(app)
+                    .item(&reload_item)
+                    .item(&quit_item)
+                    .build()?;
                 let tooltip = generate_main_window_title(
                     &config,
                     app.config()
@@ -62,6 +66,8 @@ pub fn run() {
                     .on_menu_event(move |app, event| {
                         if event.id() == "quit" {
                             window::exit(app.app_handle().clone());
+                        } else if event.id() == "reload" {
+                            window::reload();
                         }
                     })
                     .build(app)?;
