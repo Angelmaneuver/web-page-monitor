@@ -75,6 +75,16 @@ pub fn reload() {
     WINDOW.get().unwrap().monitor.reload().unwrap();
 }
 
+pub fn show_on_top() -> tauri::Result<()> {
+    let main = &WINDOW.get().unwrap().main;
+
+    main.show()?;
+    main.unminimize()?;
+    main.set_focus()?;
+
+    Ok(())
+}
+
 #[tauri::command]
 pub fn exit(app: AppHandle) {
     #[cfg(target_os = "macos")]

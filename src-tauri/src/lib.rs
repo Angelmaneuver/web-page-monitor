@@ -43,9 +43,12 @@ pub fn run() {
             let app_handle = app.handle();
 
             if config.kiosk {
+                let show_on_top_item =
+                    MenuItem::with_id(app, "show_on_top", "最前面に表示", true, None::<&str>)?;
                 let reload_item = MenuItem::with_id(app, "reload", "リロード", true, None::<&str>)?;
                 let quit_item = MenuItem::with_id(app, "quit", "終了", true, None::<&str>)?;
                 let menu = MenuBuilder::new(app)
+                    .item(&show_on_top_item)
                     .item(&reload_item)
                     .item(&quit_item)
                     .build()?;
@@ -66,6 +69,10 @@ pub fn run() {
                             window::exit(app.app_handle().clone());
                         } else if event.id() == "reload" {
                             window::reload();
+                        } else if event.id() == "show_on_top" {
+                            if let Err(error) = window::show_on_top() {
+                                eprintln!("failed to show window on top: {}", error);
+                            }
                         }
                     })
                     .build(app)?;
