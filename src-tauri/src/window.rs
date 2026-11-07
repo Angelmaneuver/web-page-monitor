@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 use std::sync::OnceLock;
 use tauri::utils::config::WindowConfig;
 use tauri::Size::Logical;
@@ -9,6 +10,7 @@ pub struct Config {
     pub main: WindowConfig,
     pub monitor: WindowConfig,
     pub kiosk: bool,
+    pub icon: Option<PathBuf>,
     pub position: Option<(Option<f64>, Option<f64>)>,
 }
 

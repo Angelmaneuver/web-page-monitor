@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::panic;
+use std::path::PathBuf;
 use std::str::FromStr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::OnceLock;
@@ -31,6 +32,7 @@ pub fn run() {
                 main: get_window_config(app, "main"),
                 monitor: get_window_config(app, "monitor"),
                 kiosk: false,
+                icon: None,
                 position: None,
             };
 
@@ -55,11 +57,7 @@ pub fn run() {
                         .unwrap_or("web-page-monitor"),
                 );
                 let tray_icon = TrayIconBuilder::new()
-                    .icon(
-                        app.default_window_icon()
-                            .cloned()
-                            .expect("default window icon"),
-                    )
+                    .icon(load_tray_icon(app, config.icon.as_deref()))
                     .menu(&menu)
                     .tooltip(tooltip)
                     .show_menu_on_left_click(true)
@@ -210,6 +208,14 @@ fn set_cli_args(app: &mut tauri::App, config: &mut window::Config) {
         dbg!("{:?}", &kiosk);
         config.kiosk = kiosk;
 
+        if config.kiosk {
+            config.icon = matches
+                .args
+                .get("icon")
+                .and_then(|arg| arg.value.as_str())
+                .map(PathBuf::from);
+        }
+
         let x = matches.args.get("x").and_then(|arg| arg.value.as_str());
         let y = matches.args.get("y").and_then(|arg| arg.value.as_str());
 
@@ -217,6 +223,34 @@ fn set_cli_args(app: &mut tauri::App, config: &mut window::Config) {
     } else {
         panic!("error while analyzing the startup options");
     }
+}
+
+fn load_tray_icon(
+    app: &tauri::App,
+    path: Option<&std::path::Path>,
+) -> tauri::image::Image<'static> {
+    let custom_icon = path.and_then(|path| match tauri::image::Image::from_path(path) {
+        Ok(icon) => Some(icon),
+        Err(error) => {
+            app.dialog()
+                .message(format!(
+                    "指定されたトレイアイコンを読み込めませんでした。既定のアイコンを使用します。\n\n{}\n{}",
+                    path.display(), error
+                ))
+                .kind(MessageDialogKind::Warning)
+                .title("トレイアイコン")
+                .blocking_show();
+            None
+        }
+    });
+
+    custom_icon
+        .or_else(|| {
+            app.default_window_icon()
+                .cloned()
+                .map(|icon| icon.to_owned())
+        })
+        .expect("default window icon")
 }
 
 fn parse_position_args(x: Option<&str>, y: Option<&str>) -> Option<(Option<f64>, Option<f64>)> {
